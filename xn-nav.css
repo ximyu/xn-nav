@@ -1,0 +1,19 @@
+/* the css for xn-nav */
+.xn_nav_selected {
+  background-image:-webkit-gradient(linear, 0% 0%, 0% 30%, from(#CEE1EE), to(#FFFFFF));
+}
+
+article.a-feed {
+  padding-top: 10px !important;
+  margin-top: 0px !important;
+  padding-bottom: 6px !important;
+  margin-bottom: 0px !important;  
+}
+
+article.a-feed:first-child {
+  margin-top: 10px !important;
+}
+
+article.a-feed .feed-toolbar {
+  top: 10px !important;
+}

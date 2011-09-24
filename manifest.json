@@ -1,0 +1,13 @@
+{
+  "name": "RenRen Keyboard Navigation Extension",
+  "version": "0.1",
+  "description": "This extension allows users to navigate through their RenRen news feeds using keyboard",
+  "content_scripts": [
+    {
+      "matches": ["http://renren.com/*", "http://www.renren.com/*"],
+      "css": ["xn-nav.css"],
+      "js": ["xn-nav.js"],
+	  "run_at": "document_end"
+    }
+  ]
+}
