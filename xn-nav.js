@@ -159,6 +159,7 @@
   var newStatusTextarea = document.querySelectorAll('.status-content')[0];
   var keyNav = new XNKeyNav();
   var navHandler = function(e) {
+    if (e.target.tagName !== 'BODY') return;
     var keyHandler = keyNav.keyMapping[e.keyCode];
     // if an undefined key is pressed, simply ignore it
     if (typeof keyHandler == 'string') keyNav[keyHandler](e);
