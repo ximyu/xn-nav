@@ -10,7 +10,8 @@
     this.keyMapping = {
       // Specific news item
       82  /* key r */: 'refreshNewsFeeds', // reply to status/share/photo
-      67  : 'c',  // close the item
+      67  /* key c */: 'markAllAsRead',  // mark all as read
+      68  : 'd',  // mark this item as read
       // News feeds related
       190 : '.',  // refresh news feeds
       101 : 'e', // clear all news feeds
@@ -39,35 +40,49 @@
     return [curleft,curtop];
   };
   
+  // A general method for triggering a click event 
+  // on the specified element (either a link or button)
+  XNKeyNav.prototype.clickOnElem = function(elem, offsetX, offsetY) {
+    var elemPos = this.findPos(elem);
+    console.log("The position of the element is [" + elemPos[0] + ", " + elemPos[1] + "]");
+    if (document.createEvent) {
+      console.log("Chrome supports createEvent");
+      var clickEvent = document.createEvent("MouseEvent");
+      clickEvent.initMouseEvent(
+        "click",                // type
+        false,                  // canBubble
+        false,                  // cancelable
+        window,                 // view
+        1,                      // detail - number of clicks
+        elemPos[0] + offsetX,   // screenX
+        elemPos[1] + offsetY,   // screenY
+        0,                      // clientX
+        0,                      // clientY
+        false,                  // ctrlKey
+        false,                  // altKey
+        false,                  // shiftKey
+        false,                  // metaKey
+        0,                      // button - 0 indicates left button of mouse
+        null                    // relatedTarget
+      );
+      elem.dispatchEvent(clickEvent);
+    }
+  };
+  
+  // Key c
+  XNKeyNav.prototype.markAllAsRead = function() {
+    console.log("Mark all as read [" + new Date() + "]");
+    var btn = document.querySelectorAll('.mark-all-read a')[0];
+    this.clickOnElem(btn, 2, 2); // an offset of (2px, 2px) for a general link
+    this.exitSelectionMode();
+  };
+  
   // Key r
   XNKeyNav.prototype.refreshNewsFeeds = function(e) {
     console.log("Refresh news feeds [" + new Date() + "]");
     var refreshLink = document.querySelectorAll('.reload-feed')[0];
-    var linkPos = this.findPos(refreshLink);
-    console.log("The position of refresh link is [" + linkPos[0] + ", " + linkPos[1] + "]");
-    if (document.createEvent) {
-      console.log("Chrome supports createEvent");
-      var clickRefresh = document.createEvent("MouseEvent");
-      clickRefresh.initMouseEvent(
-        "click",          // type
-        false,            // canBubble
-        false,            // cancelable
-        window,           // view
-        1,                // detail - number of clicks
-        linkPos[0] + 2,   // screenX
-        linkPos[1] + 2,   // screenY
-        0,                // clientX
-        0,                // clientY
-        false,            // ctrlKey
-        false,            // altKey
-        false,            // shiftKey
-        false,            // metaKey
-        0,                // button - 0 indicates left button of mouse
-        null              // relatedTarget
-      );
-      refreshLink.dispatchEvent(clickRefresh);
-      this.exitSelectionMode();
-    }
+    this.clickOnElem(refreshLink, 2, 2); // an offset of (2px, 2px) for a general link
+    this.exitSelectionMode();
   };
   
   // Key n
@@ -136,7 +151,15 @@
         this.highlightItem(nextIndex);
         this.selectedItemIndex = nextIndex;
         this.scrollToSelectedElem();
-      } 
+      } else if (nextIndex === this.allItems.length) {
+        var reloadedAllItems = document.querySelectorAll('article.a-feed');
+        if (reloadedAllItems.length > this.allItems.length) {
+          this.allItems = reloadedAllItems;
+          this.highlightItem(nextIndex);
+          this.selectedItemIndex = nextIndex;
+          this.scrollToSelectedElem();
+        }
+      }
     }
   };
   
