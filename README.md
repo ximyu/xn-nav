@@ -7,6 +7,7 @@ Supported keyboard shortcuts
 ----------------------------
 * `r` - Refresh news feeds
 * `n` - Focus to the textarea for writing new status
+* `c` - Mark all news feeds as read
 * `j` - Select next news feed
 * `k` - Select previous news feed
 * `Esc` - Exit selection mode and scroll to page top
