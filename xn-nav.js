@@ -11,7 +11,7 @@
       // Specific news item
       82  /* key r */: 'refreshNewsFeeds', // reply to status/share/photo
       67  /* key c */: 'markAllAsRead',  // mark all as read
-      68  : 'd',  // mark this item as read
+      68  /* key d */: 'markAsRead',  // mark this item as read
       // News feeds related
       190 : '.',  // refresh news feeds
       101 : 'e', // clear all news feeds
@@ -69,12 +69,88 @@
     }
   };
   
+  XNKeyNav.prototype.hoverOnElem = function(elem, offsetX, offsetY) {
+    var elemPos = this.findPos(elem);
+    console.log("The position of the element is [" + elemPos[0] + ", " + elemPos[1] + "]");
+    if (document.createEvent) {
+      console.log("Chrome supports createEvent");
+      var clickEvent = document.createEvent("MouseEvent");
+      clickEvent.initMouseEvent(
+        "mouseover",                // type
+        false,                  // canBubble
+        false,                  // cancelable
+        window,                 // view
+        0,                      // detail - number of clicks
+        elemPos[0] + offsetX,   // screenX
+        elemPos[1] + offsetY,   // screenY
+        0,                      // clientX
+        0,                      // clientY
+        false,                  // ctrlKey
+        false,                  // altKey
+        false,                  // shiftKey
+        false,                  // metaKey
+        0,                      // button - 0 indicates left button of mouse
+        elem                    // relatedTarget
+      );
+      elem.dispatchEvent(clickEvent);
+    }
+  };
+  
+  XNKeyNav.prototype.findMarkAllAsReadConfirmButton = function() {
+    var dialogs = document.querySelectorAll('#dropmenuHolder .dialog_content');
+    console.log("Found " + dialogs.length + " dialogs in the page");
+    for (var i = 0; i < dialogs.length; i++) {
+      var dialog = dialogs[i];
+      var dialogBody = dialog.querySelectorAll('.dialog_body')[0].innerHTML;
+      console.log("Dialog body: " + dialogBody);
+      if (escape(dialogBody) === // 确定将全部新鲜事设置为已读吗?
+      '%u786E%u5B9A%u5C06%u5168%u90E8%u65B0%u9C9C%u4E8B%u8BBE%u7F6E%u4E3A%u5DF2%u8BFB%u5417%3F') {
+        var button = dialog.querySelectorAll('.dialog_buttons input[type=button]')[0];
+        // console.log("Found it! " + dialog.querySelectorAll('.dialog_buttons input[type=button]').length);
+        return button;
+      }
+    }
+    return null;
+  };
+
+  // Blur the focused element, so the target of all events
+  // will be the BODY tag
+  XNKeyNav.prototype.blurEverything = function() {
+    var focusedElem = document.querySelectorAll(':focus')[0];
+    // if (focusedElem.getAttribute('value'))
+    //   console.log("Focused element: " + focusedElem.getAttribute('value'));
+    // else
+    //   console.log("Focused element: " + focusedElem.innerHTML);
+    focusedElem.blur();
+  };
+  
   // Key c
   XNKeyNav.prototype.markAllAsRead = function() {
     console.log("Mark all as read [" + new Date() + "]");
     var btn = document.querySelectorAll('.mark-all-read a')[0];
+    if (typeof btn === 'undefined') {
+      console.log("Cannot mark all as read, the button is not there");
+      return;
+    }
     this.clickOnElem(btn, 2, 2); // an offset of (2px, 2px) for a general link
-    this.exitSelectionMode();
+    // var confirmButton = this.findMarkAllAsReadConfirmButton();
+    //     confirmButton.addEventListener('click', function() {
+    //       console.log("Confirm button triggered. Focus to body.");
+    //       // document.getElementsByTagName('body')[0].focus();
+    //       this.blur();
+    //     }, false);
+  };
+  
+  // Key d
+  XNKeyNav.prototype.markAsRead = function() {
+    console.log("Mark one item as read [" + new Date() + "]");
+    if (!this.selectionMode) return;
+    var deleteBtn = this.allItems[this.selectedItemIndex].querySelectorAll('.delete')[0];
+    this.hoverOnElem(deleteBtn, 2, 2); // a small btn
+    // this.selectedItemIndex -= 1;
+    // if (this.selectedItemIndex < 0) this.selectedItemIndex = 0;
+    // this.allItems = document.querySelectorAll('article.a-feed');
+    // this.highlightItem(this.selectedItemIndex);
   };
   
   // Key r
@@ -158,6 +234,12 @@
           this.highlightItem(nextIndex);
           this.selectedItemIndex = nextIndex;
           this.scrollToSelectedElem();
+        } else {
+          var moreFeedsBtn = document.querySelectorAll('.feed-module .more-feed a')[0];
+          console.log(moreFeedsBtn.style.display);
+          // if (moreFeedsBtn.style.display) {
+          //   this.clickOnElem(moreFeedsBtn, 5, 5); // The more-feeds button is larger :)
+          // }
         }
       }
     }
