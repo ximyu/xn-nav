@@ -10,7 +10,7 @@ Supported keyboard shortcuts
 * `c` - Mark all news feeds as read
 * `j` - Select next news feed
 * `k` - Select previous news feed
-* `Esc` - Exit selection mode and scroll to page top
+* `Esc` - Exit selection mode
 
 How to install
 --------------
