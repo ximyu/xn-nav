@@ -19,7 +19,7 @@
       // Navigation
       74  /* key j */: 'navDown', // nav: move down
       75  /* key k */: 'navUp', // nav: move up
-      27  /* key esc */: 'exitSelectionMode', // nav: exit nav
+      27  /* key esc */: 'escKeyHandler', // nav: exit nav
       0   : '!' // placeholder
     };
     
@@ -96,7 +96,7 @@
     }
   };
   
-  XNKeyNav.prototype.findMarkAllAsReadConfirmButton = function() {
+  XNKeyNav.prototype.findMarkAllAsReadButtons = function() {
     var dialogs = document.querySelectorAll('#dropmenuHolder .dialog_content');
     console.log("Found " + dialogs.length + " dialogs in the page");
     for (var i = 0; i < dialogs.length; i++) {
@@ -105,12 +105,10 @@
       console.log("Dialog body: " + dialogBody);
       if (escape(dialogBody) === // 确定将全部新鲜事设置为已读吗?
       '%u786E%u5B9A%u5C06%u5168%u90E8%u65B0%u9C9C%u4E8B%u8BBE%u7F6E%u4E3A%u5DF2%u8BFB%u5417%3F') {
-        var button = dialog.querySelectorAll('.dialog_buttons input[type=button]')[0];
-        // console.log("Found it! " + dialog.querySelectorAll('.dialog_buttons input[type=button]').length);
-        return button;
+        return dialog.querySelectorAll('.dialog_buttons input[type=button]');
       }
     }
-    return null;
+    return [];
   };
 
   // Blur the focused element, so the target of all events
@@ -121,7 +119,8 @@
     //   console.log("Focused element: " + focusedElem.getAttribute('value'));
     // else
     //   console.log("Focused element: " + focusedElem.innerHTML);
-    focusedElem.blur();
+    if (typeof focusedElem !== 'undefined')
+      focusedElem.blur();
   };
   
   // Key c
@@ -133,12 +132,18 @@
       return;
     }
     this.clickOnElem(btn, 2, 2); // an offset of (2px, 2px) for a general link
-    // var confirmButton = this.findMarkAllAsReadConfirmButton();
-    //     confirmButton.addEventListener('click', function() {
-    //       console.log("Confirm button triggered. Focus to body.");
-    //       // document.getElementsByTagName('body')[0].focus();
-    //       this.blur();
-    //     }, false);
+    var dialogBtns = this.findMarkAllAsReadButtons();
+    var blurFunc = this.blurEverything;
+    var escBlurFunc = function(e) {
+      if (e.keyCode === 27) {
+        blurFunc();
+      }
+    };
+    for (var i = 0; i < dialogBtns.length; i++) {
+      var dialogBtn = dialogBtns[i];
+      dialogBtn.addEventListener('click', blurFunc, false);
+      dialogBtn.addEventListener('keyup', escBlurFunc, false);
+    }
   };
   
   // Key d
@@ -206,7 +211,15 @@
     this.clearAllHighlights();
     this.selectedItemIndex = 0;
     this.allItems = null;
+    this.blurEverything();
     window.scrollTo(0, 0);
+  };
+  
+  // Key Esc
+  XNKeyNav.prototype.escKeyHandler = function() {
+    this.selectionMode = false;
+    this.clearAllHighlights();
+    this.blurEverything();
   };
   
   // TODO: determine whether a scroll is needed
@@ -219,9 +232,15 @@
   // Key j
   XNKeyNav.prototype.navDown = function() {
     console.log("Nav down [" + new Date() + "]");
-    if (this.selectionMode === false)
-      this.selectFirstItem();
-    else {
+    if (this.selectionMode === false) {
+      // this.selectFirstItem();
+      if (this.allItems === null)
+        this.selectFirstItem();
+      else {
+        this.selectionMode = true;
+        this.highlightItem(this.selectedItemIndex);
+      }
+    } else {
       var nextIndex = this.selectedItemIndex + 1;
       if (nextIndex < this.allItems.length) {
         this.highlightItem(nextIndex);
@@ -248,9 +267,14 @@
   // Key k
   XNKeyNav.prototype.navUp = function() {
     console.log("Nav up [" + new Date() + "]");
-    if (this.selectionMode === false)
-      this.selectFirstItem();
-    else {
+    if (this.selectionMode === false) {
+      if (this.allItems === null)
+        this.selectFirstItem();
+      else {
+        this.selectionMode = true;
+        this.highlightItem(this.selectedItemIndex);
+      }
+    } else {
       var nextIndex = this.selectedItemIndex - 1;
       if (nextIndex >= 0) {
         this.highlightItem(nextIndex);
