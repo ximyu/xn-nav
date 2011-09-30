@@ -5,6 +5,10 @@
     return this.replace(/^\s*([\S\s]*?)\s*$/, '$1');
   };
   
+  String.prototype.startsWith = function(prefix) {
+    return this.indexOf(prefix) === 0;
+  };
+  
   // BEGIN XNKeyNav
   function XNKeyNav() {
     this.keyMapping = {
@@ -112,16 +116,18 @@
             }
           }, false);
           textarea.focus();
+        } else {
+          var links = selItem.querySelectorAll('a');
+          for (var i = 0; i < links.length; i++) {
+            if (links[i].getAttribute('id') &&
+                links[i].getAttribute('id').startsWith('replyKey')) {
+              this.clickOnElem(links[i], 2, 2);
+              break;
+            }
+          }          
         }
       }
     }
-      // var links = selItem.querySelectorAll('a');
-      // for (var i = 0; i < links.length; i++) {
-      //   if (escape(links[i].innerHTML) === '%u56DE%u590D') {
-      //     this.clickOnElem(links[i], 2, 2);
-      //     break;
-      //   }
-      // }
   };
   
   // Key c

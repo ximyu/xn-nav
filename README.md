@@ -9,6 +9,7 @@ Supported keyboard shortcuts
 * `n` - Focus to the textarea for writing new status
 * `c` - Mark all news feeds as read
 * `d` - Mark the currently selected item as read
+* `enter` - When an item is selected and replyable, focus on the textarea for reply
 * `j` - Select next news feed
 * `k` - Select previous news feed
 * `Esc` - Exit selection mode
