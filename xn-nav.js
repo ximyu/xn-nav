@@ -157,6 +157,7 @@
   XNKeyNav.prototype.markAsRead = function() {
     console.log("Mark one item as read [" + new Date() + "]");
     if (!this.selectionMode) return;
+    if (this.allItems.length == 0) return;
     var deleteBtn = this.allItems[this.selectedItemIndex].querySelectorAll('.delete')[0];
     this.clickOnElem(deleteBtn, 2, 2); // a small btn
     this.selectedItemIndex -= 1;
@@ -166,7 +167,8 @@
       nowAllItems = document.querySelectorAll('article.a-feed');
       if (nowAllItems.length < currentCount) {
         navigator.allItems = nowAllItems;
-        navigator.highlightItem(navigator.selectedItemIndex);
+        if (navigator.allItems.length > 0)
+          navigator.highlightItem(navigator.selectedItemIndex);
       } else {
         window.setTimeout(updateHighlight, 200, currentCount, highlightIndex, navigator);
       }
