@@ -10,11 +10,11 @@
     this.keyMapping = {
       // Specific news item
       82  /* key r */: 'refreshNewsFeeds', // reply to status/share/photo
-      67  /* key c */: 'markAllAsRead',  // mark all as read
       68  /* key d */: 'markAsRead',  // mark this item as read
+      13  /* enter */: 'commentItem', // make comment on the item
       // News feeds related
       190 : '.',  // refresh news feeds
-      101 : 'e', // clear all news feeds
+      67  /* key c */: 'markAllAsRead',  // mark all as read
       78  /* key n */: 'postNewStatus', // post new status
       // Navigation
       74  /* key j */: 'navDown', // nav: move down
@@ -50,7 +50,7 @@
       var clickEvent = document.createEvent("MouseEvent");
       clickEvent.initMouseEvent(
         "click",                // type
-        false,                  // canBubble
+        true,                  // canBubble
         false,                  // cancelable
         window,                 // view
         1,                      // detail - number of clicks
@@ -64,33 +64,6 @@
         false,                  // metaKey
         0,                      // button - 0 indicates left button of mouse
         null                    // relatedTarget
-      );
-      elem.dispatchEvent(clickEvent);
-    }
-  };
-  
-  XNKeyNav.prototype.hoverOnElem = function(elem, offsetX, offsetY) {
-    var elemPos = this.findPos(elem);
-    console.log("The position of the element is [" + elemPos[0] + ", " + elemPos[1] + "]");
-    if (document.createEvent) {
-      console.log("Chrome supports createEvent");
-      var clickEvent = document.createEvent("MouseEvent");
-      clickEvent.initMouseEvent(
-        "mouseover",                // type
-        false,                  // canBubble
-        false,                  // cancelable
-        window,                 // view
-        0,                      // detail - number of clicks
-        elemPos[0] + offsetX,   // screenX
-        elemPos[1] + offsetY,   // screenY
-        0,                      // clientX
-        0,                      // clientY
-        false,                  // ctrlKey
-        false,                  // altKey
-        false,                  // shiftKey
-        false,                  // metaKey
-        0,                      // button - 0 indicates left button of mouse
-        elem                    // relatedTarget
       );
       elem.dispatchEvent(clickEvent);
     }
@@ -123,6 +96,34 @@
       focusedElem.blur();
   };
   
+  // Key enter
+  XNKeyNav.prototype.commentItem = function() {
+    console.log("Comment on item [" + new Date() + "]");
+    if (!this.selectionMode) return;
+    var selItem = this.allItems[this.selectedItemIndex];
+    var textarea = selItem.querySelectorAll('textarea.input-text')[0];
+    if (typeof textarea !== 'undefined') {
+      var replies = selItem.querySelectorAll('.replies')[0];
+      if (typeof replies !== 'undefined') {
+        if (replies.style.display !== 'none') {
+          textarea.addEventListener("keyup", function(e) {
+            if (e.keyCode == 27) {// Esc
+              textarea.blur();
+            }
+          }, false);
+          textarea.focus();
+        }
+      }
+    }
+      // var links = selItem.querySelectorAll('a');
+      // for (var i = 0; i < links.length; i++) {
+      //   if (escape(links[i].innerHTML) === '%u56DE%u590D') {
+      //     this.clickOnElem(links[i], 2, 2);
+      //     break;
+      //   }
+      // }
+  };
+  
   // Key c
   XNKeyNav.prototype.markAllAsRead = function() {
     console.log("Mark all as read [" + new Date() + "]");
@@ -151,11 +152,20 @@
     console.log("Mark one item as read [" + new Date() + "]");
     if (!this.selectionMode) return;
     var deleteBtn = this.allItems[this.selectedItemIndex].querySelectorAll('.delete')[0];
-    this.hoverOnElem(deleteBtn, 2, 2); // a small btn
-    // this.selectedItemIndex -= 1;
-    // if (this.selectedItemIndex < 0) this.selectedItemIndex = 0;
-    // this.allItems = document.querySelectorAll('article.a-feed');
-    // this.highlightItem(this.selectedItemIndex);
+    this.clickOnElem(deleteBtn, 2, 2); // a small btn
+    this.selectedItemIndex -= 1;
+    if (this.selectedItemIndex < 0) this.selectedItemIndex = 0;
+    var updateHighlight = function(currentCount, highlightIndex, navigator) {
+      console.log("Trigger updateHighlight at [" + new Date() + "]");
+      nowAllItems = document.querySelectorAll('article.a-feed');
+      if (nowAllItems.length < currentCount) {
+        navigator.allItems = nowAllItems;
+        navigator.highlightItem(navigator.selectedItemIndex);
+      } else {
+        window.setTimeout(updateHighlight, 200, currentCount, highlightIndex, navigator);
+      }
+    };
+    updateHighlight(this.allItems.length, this.selectedItemIndex, this);
   };
   
   // Key r
