@@ -14,6 +14,8 @@
 	  "base-all.js": "http://dl.dropbox.com/u/6824415/xn/base-all.js",
 	  "home.js": "http://dl.dropbox.com/u/6824415/xn/home.js",
 	  "home-frame.js": "http://dl.dropbox.com/u/6824415/xn/home-frame.js",
+      // "xn.app.webpager.js": "http://s.xnimg.cn/a25243/jspro/xn.app.webpager.js",
+      // "xn.jebe.js": "http://jebe.xnimg.cn/18524/xn.jebe.js"
 	},
 	"css" : {
 	  "home-all-min.css": "http://dl.dropbox.com/u/6824415/xn/home-all-min.css",
