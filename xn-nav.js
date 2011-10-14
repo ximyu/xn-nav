@@ -11,52 +11,55 @@
   
   var dbReplacement = {
     "js" : {
-	  "base-all.js": "http://dl.dropbox.com/u/6824415/xn/base-all.js",
-	  "home.js": "http://dl.dropbox.com/u/6824415/xn/home.js",
-	  "home-frame.js": "http://dl.dropbox.com/u/6824415/xn/home-frame.js",
+      "base-all.js": "http://dl.dropbox.com/u/6824415/xn/base-all.js",
+      "home.js": "http://dl.dropbox.com/u/6824415/xn/home.js",
+      "home-frame.js": "http://dl.dropbox.com/u/6824415/xn/home-frame.js"
       // "xn.app.webpager.js": "http://s.xnimg.cn/a25243/jspro/xn.app.webpager.js",
       // "xn.jebe.js": "http://jebe.xnimg.cn/18524/xn.jebe.js"
-	},
-	"css" : {
-	  "home-all-min.css": "http://dl.dropbox.com/u/6824415/xn/home-all-min.css",
-	  "home-frame-all-min.css": "http://dl.dropbox.com/u/6824415/xn/home-frame-all-min.css"
-	}
+    },
+    "css" : {
+      "home-all-min.css": "http://dl.dropbox.com/u/6824415/xn/home-all-min.css",
+      "home-frame-all-min.css": "http://dl.dropbox.com/u/6824415/xn/home-frame-all-min.css"
+    }
   };
-  
+
   // Replace the link to the JavaScript and CSS files
   // so that will load from Dropbox
   function loadJSAndCSSFromDropbox() {
-	var scripts = document.getElementsByTagName("script");
-	console.log(scripts.length + " JS files needed");
-	for (var jsFile in dbReplacement["js"]) {
-	  for (var i = 0, length = scripts.length; i < length; i++) {
-		var origJSLink = scripts[i].getAttribute("src");
-		if (origJSLink) {
-	      if (origJSLink.indexOf(jsFile) > 0) {
-		    scripts[i].setAttribute("src", dbReplacement["js"][jsFile]);
-		    break;
-		  }
-		}
-	  }
-	}
-	var stylesheets = document.getElementsByTagName("link");
-	console.log(stylesheets.length + " CSS files needed");
-	for (var cssFile in dbReplacement["css"]) {
-	  for (var i = 0, length = stylesheets.length; i < length; i++) {
-		if (stylesheets[i].getAttribute("rel") === "stylesheet") {
-		  var origCSSLink = stylesheets[i].getAttribute("href");
-		  if (origCSSLink) {
-			if (origCSSLink.indexOf(cssFile) > 0) {
-			  stylesheets[i].setAttribute("href", dbReplacement["css"][cssFile]);
-			  break;
-			}
-		  }
-		}
-	  }
-	}
+    var scripts = document.getElementsByTagName("script");
+    console.log(scripts.length + " JS files needed");
+    var i, length;
+    for (var jsFile in dbReplacement.js) {
+      length = scripts.length;
+      for (i = 0; i < length; i++) {
+        var origJSLink = scripts[i].getAttribute("src");
+        if (origJSLink) {
+          if (origJSLink.indexOf(jsFile) > 0) {
+          scripts[i].setAttribute("src", dbReplacement.js[jsFile]);
+          break;
+          }
+        }
+      }
+    }
+    var stylesheets = document.getElementsByTagName("link");
+    console.log(stylesheets.length + " CSS files needed");
+    for (var cssFile in dbReplacement.css) {
+      length = stylesheets.length;
+      for (i = 0; i < length; i++) {
+        if (stylesheets[i].getAttribute("rel") === "stylesheet") {
+          var origCSSLink = stylesheets[i].getAttribute("href");
+          if (origCSSLink) {
+            if (origCSSLink.indexOf(cssFile) > 0) {
+              stylesheets[i].setAttribute("href", dbReplacement.css[cssFile]);
+              break;
+            }
+          }
+        }
+      }
+    }
   }
   
-  loadJSAndCSSFromDropbox();
+  // loadJSAndCSSFromDropbox();
   // BEGIN XNKeyNav
   function XNKeyNav() {
     this.keyMapping = {
