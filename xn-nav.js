@@ -232,7 +232,7 @@
   // Key r
   XNKeyNav.prototype.refreshNewsFeeds = function(e) {
     //console.log("Refresh news feeds [" + new Date() + "]");
-    var refreshLink = document.querySelectorAll('.reload-feed')[0];
+    var refreshLink = document.querySelectorAll('#site-menu-nav a')[0];
     this.clickOnElem(refreshLink, 2, 2); // an offset of (2px, 2px) for a general link
     this.exitSelectionMode();
   };
